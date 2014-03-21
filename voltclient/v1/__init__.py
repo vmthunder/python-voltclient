@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+# Copyright 2010-2011 OpenStack Foundation
+# Copyright (c) 2013 Hewlett-Packard Development Company, L.P.
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
@@ -12,17 +15,4 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""
-test_voltclient
-----------------------------------
-
-Tests for `voltclient` module.
-"""
-
-from voltclient.tests import base
-
-
-class TestVoltclient(base.TestCase):
-
-    def test_something(self):
-        pass
+from voltclient.v1.client import Client      # noqa
