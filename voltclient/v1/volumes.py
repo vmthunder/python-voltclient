@@ -75,19 +75,10 @@ class VolumeManager(base.Manager):
         :rtype: :class:`Image`
         """
         volume_id = kwargs.pop('volume_id', None)
+        peer_id = kwargs.pop('peer_id', None)
 
-        fields = {}
-        for field in kwargs:
-            if field in PARAMS:
-                fields[field] = str(kwargs[field])
-            else:
-                msg = 'get() got an unexpected keyword argument \'%s\''
-                raise TypeError(msg % field)
-
-
-        _, body_iter = self.api.json_request('GET', '/v1/volumes/%s'
-                                          % parse.quote(str(volume_id)),
-                                          body=fields)
+        _, body_iter = self.api.raw_request('GET', '/v1/query/volumes/%s/%s'
+                                          % (volume_id, peer_id))
         body = ''.join([c for c in body_iter])
         return map(lambda x: Volume(self, x), eval(body))
 
