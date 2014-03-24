@@ -94,7 +94,7 @@ class VolumeManager(base.Manager):
     def logout(self, **kwargs):
         """Delete the metadata of a volume in volt."""
         peer_id = kwargs.pop('peer_id', None)
-        volume_id = kwargs.pop('volume_id', None)
+        volume_id = kwargs.pop('session_name', None)
         url = '/v1/volumes'
         if peer_id:
             fields = {'peer_id': peer_id}
@@ -110,14 +110,14 @@ class VolumeManager(base.Manager):
 
         TODO(zpfalpc23@gmail.com): document accepted params
         """
-        volume_id = kwargs.pop('volume_id', None)
+        volume_id = kwargs.pop('session_name', None)
 
         fields = {}
         for field in kwargs:
             if field in PARAMS:
                 fields[field] = str(kwargs[field])
             else:
-                msg = 'register() got an unexpected keyword argument \'%s\''
+                msg = 'login() got an unexpected keyword argument \'%s\''
                 raise TypeError(msg % field)
 
         resp, body_iter = self.api.raw_request(
