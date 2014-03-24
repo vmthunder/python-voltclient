@@ -85,7 +85,7 @@ class VolumeManager(base.Manager):
                 raise TypeError(msg % field)
 
 
-        _, body_iter = self.api.raw_request('GET', '/v1/volumes/%s'
+        _, body_iter = self.api.json_request('GET', '/v1/volumes/%s'
                                           % parse.quote(str(volume_id)),
                                           body=fields)
         body = ''.join([c for c in body_iter])
@@ -103,7 +103,7 @@ class VolumeManager(base.Manager):
         if volume_id:
             url += '/%s' % volume_id
 
-        _, body = self.api.raw_request('DELETE', url, body=fields)
+        _, body = self.api.json_request('DELETE', url, body=fields)
 
     def login(self, **kwargs):
         """Register a volume to Volt.
@@ -120,7 +120,7 @@ class VolumeManager(base.Manager):
                 msg = 'login() got an unexpected keyword argument \'%s\''
                 raise TypeError(msg % field)
 
-        resp, body_iter = self.api.raw_request(
+        resp, body_iter = self.api.json_request(
             'POST', '/v1/volumes/%s' % volume_id, body=fields)
         body = eval(''.join([c for c in body_iter]))
         return Volume(self, body)
