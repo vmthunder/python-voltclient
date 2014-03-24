@@ -74,7 +74,7 @@ class VolumeManager(base.Manager):
         :param image: image object or id to look up
         :rtype: :class:`Image`
         """
-        volume_id = kwargs.pop('volume_id', None)
+        volume_id = kwargs.pop('session_name', None)
         peer_id = kwargs.pop('peer_id', None)
 
         _, body_iter = self.api.raw_request('GET', '/v1/query/volumes/%s/%s'
