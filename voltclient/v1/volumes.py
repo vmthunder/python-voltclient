@@ -77,7 +77,7 @@ class VolumeManager(base.Manager):
         volume_id = kwargs.pop('session_name', None)
         peer_id = kwargs.pop('peer_id', None)
 
-        _, body_iter = self.api.raw_request('GET', '/v1/query/volumes/%s/%s'
+        _, body_iter = self.api.raw_request('GET', '/v1/volumes/query/%s/%s'
                                           % (volume_id, peer_id))
         body = ''.join([c for c in body_iter])
         return map(lambda x: Volume(self, x), eval(body))
