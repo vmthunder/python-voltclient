@@ -92,19 +92,14 @@ class VolumeManager(base.Manager):
         parents = map(lambda x: Volume(self, x), body.pop('parents'))
         return peer_id, parents
 
-    def logout(self, **kwargs):
+    def logout(self, session_name, **kwargs):
         """Delete the metadata of a volume in volt."""
         peer_id = kwargs.pop('peer_id', None)
-        volume_id = kwargs.pop('session_name', None)
-        url = '/v1/volumes'
+        url = '/v1/volumes/%s' % session_name
         if peer_id:
-            fields = {'peer_id': peer_id}
-        else:
-            fields = {}
-        if volume_id:
-            url += '/%s' % volume_id
+            url += '/%s' % peer_id
 
-        _, body = self.api.json_request('DELETE', url, body=fields)
+        _, body = self.api.raw_request('DELETE', url)
 
     def login(self, **kwargs):
         """Register a volume to Volt.
