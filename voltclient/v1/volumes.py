@@ -74,7 +74,7 @@ class VolumeManager(base.Manager):
         :param image: image object or id to look up
         :rtype: :class:`Image`
         """
-        volume_id = kwargs.pop('volume_id', None)
+        volume_id = kwargs.pop('session_name', None)
 
         fields = {}
         for field in kwargs:
@@ -85,11 +85,12 @@ class VolumeManager(base.Manager):
                 raise TypeError(msg % field)
 
 
-        _, body_iter = self.api.json_request('GET', '/v1/volumes/%s'
-                                          % parse.quote(str(volume_id)),
-                                          body=fields)
-        body = ''.join([c for c in body_iter])
-        return map(lambda x: Volume(self, x), eval(body))
+        _, body = self.api.json_request('GET', '/v1/volumes/query/%s'
+                                                    % volume_id,
+                                             body=fields)
+        peer_id = body.pop('peer_id')
+        parents = map(lambda x: Volume(self, x), body.pop('parents'))
+        return peer_id, parents
 
     def logout(self, **kwargs):
         """Delete the metadata of a volume in volt."""
@@ -111,6 +112,7 @@ class VolumeManager(base.Manager):
         TODO(zpfalpc23@gmail.com): document accepted params
         """
         volume_id = kwargs.pop('session_name', None)
+        peer_id = kwargs.pop('peer_id', None)
 
         fields = {}
         for field in kwargs:
@@ -120,7 +122,6 @@ class VolumeManager(base.Manager):
                 msg = 'login() got an unexpected keyword argument \'%s\''
                 raise TypeError(msg % field)
 
-        resp, body_iter = self.api.json_request(
-            'POST', '/v1/volumes/%s' % volume_id, body=fields)
-        body = eval(''.join([c for c in body_iter]))
+        resp, body = self.api.json_request(
+            'POST', '/v1/volumes/%s/%s' % (volume_id, peer_id), body=fields)
         return Volume(self, body)
