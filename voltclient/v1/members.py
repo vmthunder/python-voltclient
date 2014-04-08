@@ -14,6 +14,7 @@
 #    under the License.
 
 from voltclient.common import base
+from voltclient.v1.volumes import Volume
 
 
 class Member(base.Resource):
@@ -31,20 +32,31 @@ class Member(base.Resource):
 class MemberManager(base.Manager):
     resource_class = Member
 
-    def heartbeat(self, **kwargs):
+    def heartbeat(self):
         """Send heartbeat message to volt
         and receive hint information.
 
         :param host: the host name of this server
         :rtype: :class:`Image`
         """
-        host = kwargs.pop('host', None)
+        url = '/v1/members/heartbeat'
 
-        fields = {}
-        if host:
-            fields['host'] = host
+        _, body_iter = self.api.raw_request('PUT', url)
 
-        _, body_iter = self.api.raw_request('PUT', '/v1/members/heartbeat',
-                                          body=fields)
-        body = eval(''.join([c for c in body_iter]))
-        return Member(self, body)
+        info = eval(''.join([c for c in body_iter]))
+
+        print info
+
+        host_info = []
+        for volume in info:
+            parents_list = []
+            for parent in volume['parents']:
+                parents_list.append(Volume(self, parent))
+            host_info.append(
+                {
+                    'peer_id': volume['peer_id'],
+                    'parents': parents_list,
+                }
+            )
+
+        return host_info
